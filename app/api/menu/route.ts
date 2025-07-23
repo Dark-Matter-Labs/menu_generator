@@ -67,17 +67,17 @@ You must respond with ONLY a valid JSON object in this exact format:
   "starter": {
     "name": "Creative dish name",
     "description": "Brief description (max 250 characters)",
-    "servedWith": "${menuType === 'FutureThreeB' ? 'Accompaniments' : ''}"
+    "servedWith": "Accompaniments or garnishes"
   },
   "main": {
     "name": "Creative dish name",
     "description": "Brief description (max 250 characters)", 
-    "servedWith": "${menuType === 'FutureThreeB' ? 'Accompaniments' : ''}"
+    "servedWith": "Accompaniments or garnishes"
   },
   "dessert": {
     "name": "Creative dish name",
     "description": "Brief description (max 250 characters)",
-    "servedWith": "${menuType === 'FutureThreeB' ? 'Accompaniments' : ''}"
+    "servedWith": "Accompaniments or garnishes"
   }
 }
 
@@ -87,14 +87,12 @@ CRITICAL JSON REQUIREMENTS:
 - Do NOT add any formatting, just pure JSON
 - Keep descriptions brief (max 250 characters)
 - Keep servedWith brief (max 90 characters)
-- For FutureThreeB: always include "servedWith" for all dishes
-- For other scenarios: randomly include "servedWith" (about 50% of dishes)
-- If "servedWith" is not needed, use empty string ""
+- ALWAYS include "servedWith" for all dishes with appropriate accompaniments
 - Ensure all JSON syntax is valid with proper quotes and commas
 - Do not include any text before or after the JSON object
 - Do NOT add trailing commas
 - Do NOT add extra commas or malformed structures
-- Ensure every property has a valid value (no empty strings followed by commas)
+- Ensure every property has a valid value
 - Test your JSON syntax before responding`;
 
       try {
