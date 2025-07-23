@@ -1,211 +1,101 @@
 "use client";
+
 import { useState } from "react";
-import MenuForm from "../components/MenuForm";
-import GeneratedMenu from "../components/GeneratedMenu";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import { Button } from "../components/ui/button";
+import MenuForm from "@/components/MenuForm";
+import GeneratedMenu from "@/components/GeneratedMenu";
+import { MenuData } from "@/types/menu";
 
 export default function Home() {
-  const [form, setForm] = useState({
-    location: "",
-    season: "Spring",
-    guests: 1,
-    context: "",
-  });
-  const [loading, setLoading] = useState(false);
+  const [menuData, setMenuData] = useState<MenuData[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [menu, setMenu] = useState<any>(null);
-  const [downloading, setDownloading] = useState(false);
-  const [downloadingPack, setDownloadingPack] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-  const handleSeason = (value: string) => setForm({ ...form, season: value });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleFormSubmit = async (formData: FormData) => {
+    setIsLoading(true);
     setError(null);
-    setMenu(null);
+    setMenuData(null);
+
     try {
-      const res = await fetch("/api/menu", {
+      const response = await fetch("/api/menu", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: formData,
       });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Unknown error");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await res.json();
-      setMenu(data);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+
+      const data = await response.json();
+      setMenuData(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate menus");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  async function downloadPDF() {
-    if (!menu) return;
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595, 842]); // A4 size
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const titleColor = rgb(80 / 255, 100 / 255, 120 / 255);
-    const textColor = rgb(31 / 255, 31 / 255, 31 / 255);
-    let y = 800;
-    page.drawRectangle({ x: 0, y: 0, width: 595, height: 842, color: rgb(1, 218 / 255, 61 / 255), opacity: 0.08 });
-    page.drawText("Menu Generator", {
-      x: 40,
-      y,
-      size: 28,
-      font,
-      color: titleColor,
-    });
-    y -= 36;
-    page.drawText(`Location: ${form.location} | Season: ${form.season} | Guests: ${form.guests}`, {
-      x: 40,
-      y,
-      size: 12,
-      font,
-      color: textColor,
-    });
-    y -= 20;
-    page.drawText(`Context & Goals: ${form.context}`, {
-      x: 40,
-      y,
-      size: 12,
-      font,
-      color: textColor,
-      maxWidth: 515,
-    });
-    y -= 30;
-    ["starter", "main", "dessert"].forEach((course) => {
-      const item = (menu as any)[course];
-      if (!item) return;
-      page.drawText(course.charAt(0).toUpperCase() + course.slice(1), {
-        x: 40,
-        y,
-        size: 18,
-        font,
-        color: titleColor,
-      });
-      y -= 22;
-      page.drawText(item.name, { x: 60, y, size: 14, font, color: textColor });
-      y -= 18;
-      page.drawText("Ingredients:", { x: 60, y, size: 12, font, color: textColor });
-      y -= 14;
-      item.ingredients.forEach((ing: any) => {
-        page.drawText(`- ${ing.item}: ${ing.quantity}`, { x: 80, y, size: 11, font, color: textColor });
-        y -= 12;
-      });
-      y -= 4;
-      page.drawText("Instructions:", { x: 60, y, size: 12, font, color: textColor });
-      y -= 14;
-      const instrLines = splitText(item.instructions, 70);
-      instrLines.forEach((line: string) => {
-        page.drawText(line, { x: 80, y, size: 11, font, color: textColor });
-        y -= 12;
-      });
-      y -= 4;
-      page.drawText("Impact:", { x: 60, y, size: 12, font, color: textColor });
-      y -= 14;
-      const impact = item.impact;
-      page.drawText(
-        `CO2e: ${impact.co2e} kg, Water: ${impact.water} L, Land: ${impact.land} m², N: ${impact.nitrogen} kg, P: ${impact.phosphorus} kg`,
-        { x: 80, y, size: 11, font, color: textColor }
-      );
-      y -= 24;
-    });
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "menu.pdf";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function splitText(text: string, maxLen: number) {
-    const words = text.split(" ");
-    const lines = [];
-    let line = "";
-    for (const word of words) {
-      if ((line + word).length > maxLen) {
-        lines.push(line.trim());
-        line = "";
+  const handleDownloadStaticPack = async () => {
+    setIsDownloading(true);
+    try {
+      const response = await fetch("/api/test-menu-pack");
+      if (!response.ok) {
+        throw new Error("Failed to download PDF pack");
       }
-      line += word + " ";
-    }
-    if (line) lines.push(line.trim());
-    return lines;
-  }
-
-  async function downloadTestMenuPDF() {
-    setDownloading(true);
-    try {
-      const res = await fetch("/api/test-menu-pdf");
-      if (!res.ok) throw new Error("Failed to download PDF");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "menu.pdf";
+      a.download = "future-menu-pack.pdf";
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error("Download failed:", err);
+      alert("Failed to download PDF pack");
     } finally {
-      setDownloading(false);
+      setIsDownloading(false);
     }
-  }
-
-  async function downloadTestMenuPackPDF() {
-    setDownloadingPack(true);
-    try {
-      const res = await fetch("/api/test-menu-pack");
-      if (!res.ok) throw new Error("Failed to download PDF pack");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "menus.pdf";
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setDownloadingPack(false);
-    }
-  }
+  };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-[80vh] gap-8 bg-gradient-to-r from-[#FFDA3D] to-[#EBE8DB] w-full">
-      <div className="flex flex-col sm:flex-row gap-4 mt-8">
-        <Button
-          className="bg-[#506478] hover:bg-[#011426] text-[#aaaaaa] font-semibold"
-          onClick={downloadTestMenuPDF}
-          disabled={downloading}
-        >
-          {downloading ? "Downloading..." : "Download Sample Menu PDF"}
-        </Button>
-        <Button
-          className="bg-[#506478] hover:bg-[#011426] text-[#aaaaaa] font-semibold"
-          onClick={downloadTestMenuPackPDF}
-          disabled={downloadingPack}
-        >
-          {downloadingPack ? "Downloading..." : "Download All Menus (PDF Pack)"}
-        </Button>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Future Menu Generator
+          </h1>
+          <p className="text-lg text-gray-600">
+            Generate menus for different future scenarios
+          </p>
         </div>
-      <MenuForm
-        form={form}
-        onChange={handleChange}
-        onSeason={handleSeason}
-        onSubmit={handleSubmit}
-        loading={loading}
-          />
-      {error && <div className="text-red-400 mt-2">{error}</div>}
-      {menu && (
-        <GeneratedMenu menu={menu} form={form} onDownload={downloadPDF} />
-      )}
-    </main>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div>
+            <MenuForm onSubmit={handleFormSubmit} />
+          </div>
+          
+          <div>
+            <div className="mb-4">
+              <button
+                onClick={handleDownloadStaticPack}
+                disabled={isDownloading}
+                className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
+                {isDownloading ? "Downloading..." : "Download Static PDF Pack"}
+              </button>
+            </div>
+            
+            <GeneratedMenu 
+              menuData={menuData}
+              isLoading={isLoading}
+              error={error}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
