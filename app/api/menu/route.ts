@@ -100,11 +100,6 @@ CRITICAL REQUIREMENTS:
         const response = await result.response;
         const generatedText = response.text();
         
-        // DEBUG: Log the exact response from Gemini
-        console.log(`=== GEMINI RESPONSE FOR ${menuType} ===`);
-        console.log(generatedText);
-        console.log(`=== END GEMINI RESPONSE ===`);
-        
         // Try to extract JSON from the response
         let menuData;
         try {
@@ -147,6 +142,9 @@ CRITICAL REQUIREMENTS:
       }
     }
 
+    console.log("Generated menus count:", menus.length);
+    console.log("Menu types:", menus.map(m => m.type));
+    
     return NextResponse.json(menus);
 
   } catch (error) {

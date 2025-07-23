@@ -26,6 +26,10 @@ export default function Home() {
       }
 
       const data = await response.json();
+      console.log("Received menu data:", data);
+      console.log("Data type:", typeof data);
+      console.log("Is array:", Array.isArray(data));
+      console.log("Length:", data?.length);
       setMenuData(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate menus");
@@ -36,6 +40,9 @@ export default function Home() {
 
   const handleDownloadGeneratedMenus = async () => {
     if (!menuData) return;
+    
+    console.log("Sending to PDF generation:", menuData);
+    console.log("Menu data length:", menuData.length);
     
     setIsDownloading(true);
     try {
