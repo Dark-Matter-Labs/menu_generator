@@ -111,7 +111,7 @@ async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any, boldF
     
     // Dish description (left-aligned) - shorter max length to match underline width
     const descSize = 12;
-    const descLines = splitText(item.description, 35); // Reduced from 50 to 35 characters
+    const descLines = splitText(item.description, 50); // Increased from 35 to 50 characters
     descLines.forEach((line: string) => {
       page.drawText(line, {
         x: leftMargin,
@@ -127,7 +127,7 @@ async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any, boldF
     
     // Served with (asterisk) - also use shorter max length
     if (item.servedWith) {
-      const servedLines = splitText(`* ${item.servedWith}`, 35); // Reduced from 50 to 35 characters
+      const servedLines = splitText(`* ${item.servedWith}`, 50); // Increased from 35 to 50 characters
       servedLines.forEach((line: string) => {
         page.drawText(line, {
           x: leftMargin,
