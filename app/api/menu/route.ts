@@ -81,7 +81,7 @@ You must respond with ONLY a valid JSON object in this exact format:
   }
 }
 
-CRITICAL REQUIREMENTS:
+CRITICAL JSON REQUIREMENTS:
 - Respond with ONLY the JSON object, no additional text
 - Do NOT wrap the JSON in markdown code blocks (no \`\`\`json or \`\`\`)
 - Do NOT add any formatting, just pure JSON
@@ -91,7 +91,11 @@ CRITICAL REQUIREMENTS:
 - For other scenarios: randomly include "servedWith" (about 50% of dishes)
 - If "servedWith" is not needed, use empty string ""
 - Ensure all JSON syntax is valid with proper quotes and commas
-- Do not include any text before or after the JSON object`;
+- Do not include any text before or after the JSON object
+- Do NOT add trailing commas
+- Do NOT add extra commas or malformed structures
+- Ensure every property has a valid value (no empty strings followed by commas)
+- Test your JSON syntax before responding`;
 
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -99,6 +103,8 @@ CRITICAL REQUIREMENTS:
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const generatedText = response.text();
+        
+        console.log(`Raw response for ${menuType}:`, generatedText);
         
         // Try to extract JSON from the response
         let menuData;
@@ -120,30 +126,21 @@ CRITICAL REQUIREMENTS:
         menus.push(menuData);
       } catch (error) {
         console.error(`Error generating menu for ${menuType}:`, error);
-        // Fallback to dummy data if API fails
-        menus.push({
-          type: menuType,
-          starter: {
-            name: "AI-Generated Starter",
-            description: "A starter dish reflecting the future scenario",
-            servedWith: "Seasonal accompaniments"
-          },
-          main: {
-            name: "AI-Generated Main Course",
-            description: "A main course reflecting the future scenario",
-            servedWith: "Local ingredients"
-          },
-          dessert: {
-            name: "AI-Generated Dessert",
-            description: "A dessert reflecting the future scenario",
-            servedWith: "Fresh garnishes"
-          }
-        });
+        throw new Error(`Failed to generate menu for ${menuType}: ${error}`);
       }
     }
 
     console.log("Generated menus count:", menus.length);
     console.log("Menu types:", menus.map(m => m.type));
+    
+    // Check if we have exactly 4 menus
+    if (menus.length < 4) {
+      console.error(`Only generated ${menus.length} menus, expected 4`);
+      return NextResponse.json(
+        { error: `Failed to generate all 4 menus. Only generated ${menus.length} menus.` },
+        { status: 500 }
+      );
+    }
     
     return NextResponse.json(menus);
 
