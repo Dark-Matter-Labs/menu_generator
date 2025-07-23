@@ -1,6 +1,8 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { MenuData } from "@/types/menu";
+import fs from "fs";
+import path from "path";
 
 const menuColors: Record<MenuData["type"], [number, number, number]> = {
   FutureOne: [4, 157, 144],      // #049d90
@@ -12,15 +14,18 @@ const menuColors: Record<MenuData["type"], [number, number, number]> = {
 export async function generateMenuPDF(menu: MenuData): Promise<Uint8Array> {
   const url = 'https://pdf-lib.js.org/assets/ubuntu/Ubuntu-R.ttf'
   const fontBytes = await fetch(url).then(res => res.arrayBuffer())
+  const boldUrl = 'https://pdf-lib.js.org/assets/ubuntu/Ubuntu-B.ttf'
+  const boldFontBytes = await fetch(boldUrl).then(res => res.arrayBuffer())
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
   const customFont = await pdfDoc.embedFont(fontBytes)
-  await addMenuPage(pdfDoc, menu, customFont);
+  const boldFont = await pdfDoc.embedFont(boldFontBytes)
+  await addMenuPage(pdfDoc, menu, customFont, boldFont);
   return await pdfDoc.save();
 }
 
-async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any) {
+async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any, boldFont: any) {
   const page = pdfDoc.addPage([595, 842]); // A4
   
   const colorArr = menuColors[menu.type];
@@ -29,27 +34,22 @@ async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any) {
   // White background
   page.drawRectangle({ x: 0, y: 0, width: 595, height: 842, color: rgb(1, 1, 1) });
 
-  // Add logo to top right
-  const logoUrl = `${process.env.NEXT_PUBLIC_BASE_URL || ""}/logo.png`;
-  let logoBytes: Uint8Array | null = null;
+  // Add logo to top right - using local file
   try {
-    // Try to fetch the logo from the public directory
-    const res = await fetch(logoUrl.startsWith("/") ? logoUrl : "/logo.png");
-    if (res.ok) {
-      logoBytes = new Uint8Array(await res.arrayBuffer());
-    }
-  } catch {}
-  if (logoBytes) {
-    try {
-      const logoImg = await pdfDoc.embedPng(logoBytes);
-      const logoDims = logoImg.scale(60 / logoImg.height); // 60px tall
-      page.drawImage(logoImg, {
-        x: 595 - logoDims.width - 40,
-        y: 842 - logoDims.height - 40,
-        width: logoDims.width,
-        height: logoDims.height,
-      });
-    } catch {}
+    const logoPath = path.join(process.cwd(), "public", "logo.png");
+    const logoBuffer = fs.readFileSync(logoPath);
+    const logoBytes = logoBuffer.buffer.slice(logoBuffer.byteOffset, logoBuffer.byteOffset + logoBuffer.byteLength);
+    
+    const logoImg = await pdfDoc.embedPng(logoBytes);
+    const logoDims = logoImg.scale(30 / logoImg.height); // 30px tall (2x smaller)
+    page.drawImage(logoImg, {
+      x: 595 - logoDims.width - 40,
+      y: 842 - logoDims.height - 40,
+      width: logoDims.width,
+      height: logoDims.height,
+    });
+  } catch (error) {
+    console.log("Failed to embed logo:", error);
   }
 
   // Layout
@@ -88,7 +88,7 @@ async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any) {
     
     y -= 15; // SPACING: Space between course name and underline
     
-    // Underline (500px wide)
+    // Underline (400px wide)
     page.drawLine({
       start: { x: leftMargin, y: y - 5 },
       end: { x: leftMargin + 400, y: y - 5 },
@@ -98,20 +98,20 @@ async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any) {
     
     y -= 50; // SPACING: Space after underline
     
-    // Dish title (as provided in data)
+    // Dish title (as provided in data) - BOLD
     const nameSize = 12;
     page.drawText(item.name, {
       x: leftMargin,
       y,
       size: nameSize,
-      font,
+      font: boldFont,
       color: textColor,
     });
     y -= 15; // SPACING: Space after dish name
     
-    // Dish description (left-aligned)
+    // Dish description (left-aligned) - shorter max length to match underline width
     const descSize = 12;
-    const descLines = splitText(item.description, 50);
+    const descLines = splitText(item.description, 35); // Reduced from 50 to 35 characters
     descLines.forEach((line: string) => {
       page.drawText(line, {
         x: leftMargin,
@@ -123,20 +123,23 @@ async function addMenuPage(pdfDoc: PDFDocument, menu: MenuData, font: any) {
       y -= 15; // SPACING: Space between description lines
     });
     
-    y -= 30; // SPACING: Space after description (before served with)
+    y -= 10; // SPACING: Space after description (before served with)
     
-    // Served with (asterisk)
+    // Served with (asterisk) - also use shorter max length
     if (item.servedWith) {
-      page.drawText(`* ${item.servedWith}`, {
-        x: leftMargin,
-        y,
-        size: descSize,
-        font,
-        color: textColor,
+      const servedLines = splitText(`* ${item.servedWith}`, 35); // Reduced from 50 to 35 characters
+      servedLines.forEach((line: string) => {
+        page.drawText(line, {
+          x: leftMargin,
+          y,
+          size: descSize,
+          font,
+          color: textColor,
+        });
+        y -= 15; // SPACING: Space after served with lines
       });
-      y -= 15; // SPACING: Space after served with
     }
-    y -= 50; // SPACING: Space between courses
+    y -= 40; // SPACING: Space between courses
   });
 }
 
@@ -158,13 +161,16 @@ function splitText(text: string, maxLen: number) {
 export async function generateMenuPackPDF(menus: MenuData[]): Promise<Uint8Array> {
   const url = 'https://pdf-lib.js.org/assets/ubuntu/Ubuntu-R.ttf'
   const fontBytes = await fetch(url).then(res => res.arrayBuffer())
+  const boldUrl = 'https://pdf-lib.js.org/assets/ubuntu/Ubuntu-B.ttf'
+  const boldFontBytes = await fetch(boldUrl).then(res => res.arrayBuffer())
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
   const customFont = await pdfDoc.embedFont(fontBytes)
+  const boldFont = await pdfDoc.embedFont(boldFontBytes)
   
   for (const menu of menus) {
-    await addMenuPage(pdfDoc, menu, customFont);
+    await addMenuPage(pdfDoc, menu, customFont, boldFont);
   }
   return await pdfDoc.save();
 } 
