@@ -3,6 +3,8 @@ import { useState } from "react";
 import MenuForm from "../components/MenuForm";
 import GeneratedMenu from "../components/GeneratedMenu";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { Button } from "../components/ui/button";
+
 export default function Home() {
   const [form, setForm] = useState({
     location: "",
@@ -13,6 +15,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [menu, setMenu] = useState<any>(null);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadingPack, setDownloadingPack] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -139,15 +143,65 @@ export default function Home() {
     return lines;
   }
 
+  async function downloadTestMenuPDF() {
+    setDownloading(true);
+    try {
+      const res = await fetch("/api/test-menu-pdf");
+      if (!res.ok) throw new Error("Failed to download PDF");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "menu.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  async function downloadTestMenuPackPDF() {
+    setDownloadingPack(true);
+    try {
+      const res = await fetch("/api/test-menu-pack");
+      if (!res.ok) throw new Error("Failed to download PDF pack");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "menus.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloadingPack(false);
+    }
+  }
+
   return (
     <main className="flex flex-col items-center justify-center min-h-[80vh] gap-8 bg-gradient-to-r from-[#FFDA3D] to-[#EBE8DB] w-full">
+      <div className="flex flex-col sm:flex-row gap-4 mt-8">
+        <Button
+          className="bg-[#506478] hover:bg-[#011426] text-[#aaaaaa] font-semibold"
+          onClick={downloadTestMenuPDF}
+          disabled={downloading}
+        >
+          {downloading ? "Downloading..." : "Download Sample Menu PDF"}
+        </Button>
+        <Button
+          className="bg-[#506478] hover:bg-[#011426] text-[#aaaaaa] font-semibold"
+          onClick={downloadTestMenuPackPDF}
+          disabled={downloadingPack}
+        >
+          {downloadingPack ? "Downloading..." : "Download All Menus (PDF Pack)"}
+        </Button>
+        </div>
       <MenuForm
         form={form}
         onChange={handleChange}
         onSeason={handleSeason}
         onSubmit={handleSubmit}
         loading={loading}
-      />
+          />
       {error && <div className="text-red-400 mt-2">{error}</div>}
       {menu && (
         <GeneratedMenu menu={menu} form={form} onDownload={downloadPDF} />
