@@ -6,6 +6,11 @@ export async function POST(request: NextRequest) {
   try {
     const menuData: MenuData[] = await request.json();
     
+    // DEBUG: Log what the PDF generation is receiving
+    console.log("=== PDF GENERATION RECEIVING ===");
+    console.log(JSON.stringify(menuData, null, 2));
+    console.log("=== END PDF DATA ===");
+    
     if (!menuData || !Array.isArray(menuData)) {
       return NextResponse.json(
         { error: "Invalid menu data" },

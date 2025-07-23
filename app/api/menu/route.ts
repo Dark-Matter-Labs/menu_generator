@@ -83,6 +83,8 @@ You must respond with ONLY a valid JSON object in this exact format:
 
 CRITICAL REQUIREMENTS:
 - Respond with ONLY the JSON object, no additional text
+- Do NOT wrap the JSON in markdown code blocks (no \`\`\`json or \`\`\`)
+- Do NOT add any formatting, just pure JSON
 - Keep descriptions brief (max 250 characters)
 - Keep servedWith brief (max 90 characters)
 - For FutureThreeB: always include "servedWith" for all dishes
@@ -98,26 +100,26 @@ CRITICAL REQUIREMENTS:
         const response = await result.response;
         const generatedText = response.text();
         
+        // DEBUG: Log the exact response from Gemini
+        console.log(`=== GEMINI RESPONSE FOR ${menuType} ===`);
+        console.log(generatedText);
+        console.log(`=== END GEMINI RESPONSE ===`);
+        
         // Try to extract JSON from the response
         let menuData;
-        const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          try {
-            menuData = JSON.parse(jsonMatch[0]);
-            // Ensure the type is correct
-            menuData.type = menuType;
-            
-            // Validate that we have the required structure
-            if (!menuData.starter || !menuData.main || !menuData.dessert) {
-              throw new Error("Missing required menu structure");
-            }
-          } catch (parseError) {
-            console.log(`JSON parsing failed for ${menuType}, creating structured data`);
-            menuData = createStructuredMenu(menuType, generatedText);
+        try {
+          // Parse the entire response as JSON
+          menuData = JSON.parse(generatedText);
+          // Ensure the type is correct
+          menuData.type = menuType;
+          
+          // Validate that we have the required structure
+          if (!menuData.starter || !menuData.main || !menuData.dessert) {
+            throw new Error("Missing required menu structure");
           }
-        } else {
-          // If no JSON found, create structured data from the text
-          menuData = createStructuredMenu(menuType, generatedText);
+        } catch (parseError) {
+          console.error(`JSON parsing failed for ${menuType}:`, parseError);
+          throw new Error(`Failed to parse JSON for ${menuType}`);
         }
 
         menus.push(menuData);
@@ -154,62 +156,4 @@ CRITICAL REQUIREMENTS:
       { status: 500 }
     );
   }
-}
-
-function createStructuredMenu(menuType: string, generatedText: string): any {
-  // Try to extract dish information from the malformed text
-  const lines = generatedText.split('\n').filter(line => line.trim());
-  
-  // Look for dish names that might be in the text
-  const dishNames = [];
-  const descriptions = [];
-  
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-    
-    // Skip empty lines and JSON fragments
-    if (!trimmedLine || trimmedLine.includes('"type"') || trimmedLine.includes('{') || trimmedLine.includes('}')) {
-      continue;
-    }
-    
-    // Look for lines that might be dish names (not starting with common words)
-    if (!trimmedLine.startsWith('*') && 
-        !trimmedLine.startsWith('STARTER') && 
-        !trimmedLine.startsWith('MAIN') && 
-        !trimmedLine.startsWith('DESSERT') &&
-        !trimmedLine.startsWith('A creative') &&
-        trimmedLine.length > 3) {
-      dishNames.push(trimmedLine);
-    }
-    
-    // Look for description lines
-    if (trimmedLine.startsWith('A creative')) {
-      descriptions.push(trimmedLine);
-    }
-  }
-  
-  return {
-    type: menuType,
-    starter: {
-      name: dishNames[0] || "AI-Generated Starter",
-      description: descriptions[0] || "A creative starter dish for the future scenario",
-      servedWith: menuType === 'FutureThreeB' ? "Seasonal accompaniments" : ""
-    },
-    main: {
-      name: dishNames[1] || "AI-Generated Main Course", 
-      description: descriptions[1] || "A creative main course for the future scenario",
-      servedWith: menuType === 'FutureThreeB' ? "Local ingredients" : ""
-    },
-    dessert: {
-      name: dishNames[2] || "AI-Generated Dessert",
-      description: descriptions[2] || "A creative dessert for the future scenario", 
-      servedWith: menuType === 'FutureThreeB' ? "Fresh garnishes" : ""
-    }
-  };
-}
-
-
-// context
-// a corporate dinner for a company interested in teaching their employees about ESG
-// Goals
-// team members are more aware of the impact climate change can have on food systmes. 
+} 
