@@ -1,103 +1,157 @@
-import Image from "next/image";
-
+"use client";
+import { useState } from "react";
+import MenuForm from "../components/MenuForm";
+import GeneratedMenu from "../components/GeneratedMenu";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [form, setForm] = useState({
+    location: "",
+    season: "Spring",
+    guests: 1,
+    context: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [menu, setMenu] = useState<any>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handleSeason = (value: string) => setForm({ ...form, season: value });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setMenu(null);
+    try {
+      const res = await fetch("/api/menu", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Unknown error");
+      }
+      const data = await res.json();
+      setMenu(data);
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  async function downloadPDF() {
+    if (!menu) return;
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([595, 842]); // A4 size
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const titleColor = rgb(80 / 255, 100 / 255, 120 / 255);
+    const textColor = rgb(31 / 255, 31 / 255, 31 / 255);
+    let y = 800;
+    page.drawRectangle({ x: 0, y: 0, width: 595, height: 842, color: rgb(1, 218 / 255, 61 / 255), opacity: 0.08 });
+    page.drawText("Menu Generator", {
+      x: 40,
+      y,
+      size: 28,
+      font,
+      color: titleColor,
+    });
+    y -= 36;
+    page.drawText(`Location: ${form.location} | Season: ${form.season} | Guests: ${form.guests}`, {
+      x: 40,
+      y,
+      size: 12,
+      font,
+      color: textColor,
+    });
+    y -= 20;
+    page.drawText(`Context & Goals: ${form.context}`, {
+      x: 40,
+      y,
+      size: 12,
+      font,
+      color: textColor,
+      maxWidth: 515,
+    });
+    y -= 30;
+    ["starter", "main", "dessert"].forEach((course) => {
+      const item = (menu as any)[course];
+      if (!item) return;
+      page.drawText(course.charAt(0).toUpperCase() + course.slice(1), {
+        x: 40,
+        y,
+        size: 18,
+        font,
+        color: titleColor,
+      });
+      y -= 22;
+      page.drawText(item.name, { x: 60, y, size: 14, font, color: textColor });
+      y -= 18;
+      page.drawText("Ingredients:", { x: 60, y, size: 12, font, color: textColor });
+      y -= 14;
+      item.ingredients.forEach((ing: any) => {
+        page.drawText(`- ${ing.item}: ${ing.quantity}`, { x: 80, y, size: 11, font, color: textColor });
+        y -= 12;
+      });
+      y -= 4;
+      page.drawText("Instructions:", { x: 60, y, size: 12, font, color: textColor });
+      y -= 14;
+      const instrLines = splitText(item.instructions, 70);
+      instrLines.forEach((line: string) => {
+        page.drawText(line, { x: 80, y, size: 11, font, color: textColor });
+        y -= 12;
+      });
+      y -= 4;
+      page.drawText("Impact:", { x: 60, y, size: 12, font, color: textColor });
+      y -= 14;
+      const impact = item.impact;
+      page.drawText(
+        `CO2e: ${impact.co2e} kg, Water: ${impact.water} L, Land: ${impact.land} m², N: ${impact.nitrogen} kg, P: ${impact.phosphorus} kg`,
+        { x: 80, y, size: 11, font, color: textColor }
+      );
+      y -= 24;
+    });
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "menu.pdf";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function splitText(text: string, maxLen: number) {
+    const words = text.split(" ");
+    const lines = [];
+    let line = "";
+    for (const word of words) {
+      if ((line + word).length > maxLen) {
+        lines.push(line.trim());
+        line = "";
+      }
+      line += word + " ";
+    }
+    if (line) lines.push(line.trim());
+    return lines;
+  }
+
+  return (
+    <main className="flex flex-col items-center justify-center min-h-[80vh] gap-8 bg-gradient-to-r from-[#FFDA3D] to-[#EBE8DB] w-full">
+      <MenuForm
+        form={form}
+        onChange={handleChange}
+        onSeason={handleSeason}
+        onSubmit={handleSubmit}
+        loading={loading}
+      />
+      {error && <div className="text-red-400 mt-2">{error}</div>}
+      {menu && (
+        <GeneratedMenu menu={menu} form={form} onDownload={downloadPDF} />
+      )}
+    </main>
   );
 }
