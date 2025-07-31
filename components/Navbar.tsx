@@ -17,12 +17,10 @@ export default function Navbar() {
             </div>
             <span className="font-semibold text-lg">UBNI</span>
           </Link>
-          
-          <div className="text-sm text-gray-500">
-            Future Menu Generator
-          </div>
+
+          <div className="text-sm text-gray-500">Future Menu Generator</div>
         </div>
       </div>
     </nav>
   );
-} 
+}

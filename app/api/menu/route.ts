@@ -14,7 +14,7 @@ Food has become a central part of the healthcare system, where UBNI is used to p
 UBNI - Work for Food
 The "Work for Food" model has become part of the city's culture and infrastructure. Work contracts now include an agreement where employees trade one work day/week for a day of participating in the local food system. This model has made cities self-sufficient in food, reduced dependence on global markets, strengthened the social connections and ensured that all neighborhoods have access to fresh, nutritious food.
 
-The food culture is vibrant and delicious - think regenerative agriculture, locally sourced ingredients, seasonal menus, and innovative cooking techniques that prioritize both taste and nutrition. Restaurants and home cooks alike focus on creating meals that are both satisfying and health-promoting.`
+The food culture is vibrant and delicious - think regenerative agriculture, locally sourced ingredients, seasonal menus, and innovative cooking techniques that prioritize both taste and nutrition. Restaurants and home cooks alike focus on creating meals that are both satisfying and health-promoting.`,
   },
   FutureTwo: {
     name: "Business as Usual",
@@ -22,7 +22,7 @@ The food culture is vibrant and delicious - think regenerative agriculture, loca
 
 Many urban neighborhoods have become "food deserts," where access to fresh vegetables and nutritious food is severely limited. Economic disparities have grown, and societal problems such as social isolation, stress, and mental illness have increased. Despite the knowledge of sustainable and healthy food production, there is a lack of incentives and structures to change consumption patterns. The food system continues to be driven by short-term economic gains rather than long-term sustainability, deepening social and health gaps in society.
 
-The typical diet consists of heavily processed, mass-produced foods from supermarkets - think frozen meals, canned goods, instant noodles, processed meats, sugary drinks, and convenience foods. Fresh produce is expensive and often of poor quality, while cheap, calorie-dense processed foods dominate the market.`
+The typical diet consists of heavily processed, mass-produced foods from supermarkets - think frozen meals, canned goods, instant noodles, processed meats, sugary drinks, and convenience foods. Fresh produce is expensive and often of poor quality, while cheap, calorie-dense processed foods dominate the market.`,
   },
   FutureThree: {
     name: "Collapse Scenario",
@@ -30,7 +30,7 @@ The typical diet consists of heavily processed, mass-produced foods from superma
 
 Municipalities have been forced to adapt to a new reality, focusing entirely on the survival of as many people as possible. Citizens receive nutrition packages from the authorities containing what can still be produced in labs: algae protein tablets, nutrient-dense meal replacements, vitamin supplements, and lab-grown carbohydrates. Food has completely lost its cultural significance and has become merely a necessity for survival. You have witnessed the dramatic transformation of society. Fresh and nutritious food is almost impossible to find, and what little exists is mostly emergency aid or synthetic production. Municipal contributions ensure that everyone gets enough nutrients to survive, but they cannot meet the diverse needs of individuals.
 
-The diet consists entirely of functional nutrition - protein powders, vitamin tablets, meal replacement shakes, algae-based supplements, synthetic carbohydrates, and fortified survival rations. There's no real cooking or dining experience, just the mechanical consumption of nutrients to stay alive.`
+The diet consists entirely of functional nutrition - protein powders, vitamin tablets, meal replacement shakes, algae-based supplements, synthetic carbohydrates, and fortified survival rations. There's no real cooking or dining experience, just the mechanical consumption of nutrients to stay alive.`,
   },
   FutureThreeB: {
     name: "Collapse Scenario with Extras",
@@ -38,14 +38,14 @@ The diet consists entirely of functional nutrition - protein powders, vitamin ta
 
 Municipalities have been forced to adapt to a new reality, focusing entirely on the survival of as many people as possible. Citizens receive nutrition packages from the authorities containing what can still be produced in labs: algae protein tablets, nutrient-dense meal replacements, vitamin supplements, and lab-grown carbohydrates. Food has completely lost its cultural significance and has become merely a necessity for survival. You have witnessed the dramatic transformation of society. Fresh and nutritious food is almost impossible to find, and what little exists is mostly emergency aid or synthetic production. Municipal contributions ensure that everyone gets enough nutrients to survive, but they cannot meet the diverse needs of individuals.
 
-However, you have access to some additional resources and can occasionally source some traditional ingredients, allowing for slightly more varied meals than the standard ration packages. You might be able to grow a small garden, trade for fresh vegetables, or have access to some preserved foods. This allows for a basic salad or fresh garnish to accompany the functional nutrition supplements.`
-  }
+However, you have access to some additional resources and can occasionally source some traditional ingredients, allowing for slightly more varied meals than the standard ration packages. You might be able to grow a small garden, trade for fresh vegetables, or have access to some preserved foods. This allows for a basic salad or fresh garnish to accompany the functional nutrition supplements.`,
+  },
 };
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    
+
     // Extract form data
     const location = formData.get("location") as string;
     const season = formData.get("season") as string;
@@ -97,13 +97,13 @@ CRITICAL JSON REQUIREMENTS:
 
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        
+
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const generatedText = response.text();
-        
+
         console.log(`Raw response for ${menuType}:`, generatedText);
-        
+
         // Try to extract JSON from the response
         let menuData;
         try {
@@ -111,7 +111,7 @@ CRITICAL JSON REQUIREMENTS:
           menuData = JSON.parse(generatedText);
           // Ensure the type is correct
           menuData.type = menuType;
-          
+
           // Validate that we have the required structure
           if (!menuData.starter || !menuData.main || !menuData.dessert) {
             throw new Error("Missing required menu structure");
@@ -129,19 +129,23 @@ CRITICAL JSON REQUIREMENTS:
     }
 
     console.log("Generated menus count:", menus.length);
-    console.log("Menu types:", menus.map(m => m.type));
-    
+    console.log(
+      "Menu types:",
+      menus.map(m => m.type)
+    );
+
     // Check if we have exactly 4 menus
     if (menus.length < 4) {
       console.error(`Only generated ${menus.length} menus, expected 4`);
       return NextResponse.json(
-        { error: `Failed to generate all 4 menus. Only generated ${menus.length} menus.` },
+        {
+          error: `Failed to generate all 4 menus. Only generated ${menus.length} menus.`,
+        },
         { status: 500 }
       );
     }
-    
-    return NextResponse.json(menus);
 
+    return NextResponse.json(menus);
   } catch (error) {
     console.error("Error generating menus:", error);
     return NextResponse.json(
@@ -149,4 +153,4 @@ CRITICAL JSON REQUIREMENTS:
       { status: 500 }
     );
   }
-} 
+}

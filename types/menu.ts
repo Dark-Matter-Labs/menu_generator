@@ -1,4 +1,8 @@
-export type MenuType = "FutureOne" | "FutureTwo" | "FutureThree" | "FutureThreeB";
+export type MenuType =
+  | "FutureOne"
+  | "FutureTwo"
+  | "FutureThree"
+  | "FutureThreeB";
 
 export interface MenuCourse {
   name: string;
@@ -22,4 +26,4 @@ export interface ReceiptData {
   ubniCredits: number;
   code: string;
   // Add more fields as needed for environmental/health impact
-} 
+}

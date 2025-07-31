@@ -4,7 +4,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface MenuFormProps {
   onSubmit: (formData: FormData) => Promise<void>;
@@ -18,7 +24,7 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       await onSubmit(formData);
     } finally {
@@ -29,14 +35,21 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Menu Generation Form</h2>
-        <p className="text-gray-600">Fill in the details to generate your future scenario menus</p>
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          Menu Generation Form
+        </h2>
+        <p className="text-gray-600">
+          Fill in the details to generate your future scenario menus
+        </p>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="location" className="text-sm font-semibold text-gray-700">
+            <Label
+              htmlFor="location"
+              className="text-sm font-semibold text-gray-700"
+            >
               Location
             </Label>
             <Input
@@ -49,7 +62,10 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="season" className="text-sm font-semibold text-gray-700">
+            <Label
+              htmlFor="season"
+              className="text-sm font-semibold text-gray-700"
+            >
               Season
             </Label>
             <Select name="season" defaultValue="Spring">
@@ -67,7 +83,10 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="numberOfGuests" className="text-sm font-semibold text-gray-700">
+          <Label
+            htmlFor="numberOfGuests"
+            className="text-sm font-semibold text-gray-700"
+          >
             Number of Guests
           </Label>
           <Input
@@ -83,7 +102,10 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="context" className="text-sm font-semibold text-gray-700">
+          <Label
+            htmlFor="context"
+            className="text-sm font-semibold text-gray-700"
+          >
             Context
           </Label>
           <textarea
@@ -97,7 +119,10 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="goals" className="text-sm font-semibold text-gray-700">
+          <Label
+            htmlFor="goals"
+            className="text-sm font-semibold text-gray-700"
+          >
             Goals
           </Label>
           <textarea
@@ -122,8 +147,18 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
             </div>
           ) : (
             <div className="flex items-center justify-center gap-3">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
               <span>Generate Future Menus</span>
             </div>
@@ -132,4 +167,4 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
       </form>
     </div>
   );
-} 
+}

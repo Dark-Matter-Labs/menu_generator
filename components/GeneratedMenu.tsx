@@ -6,7 +6,11 @@ interface GeneratedMenuProps {
   error: string | null;
 }
 
-export default function GeneratedMenu({ menuData, isLoading, error }: GeneratedMenuProps) {
+export default function GeneratedMenu({
+  menuData,
+  isLoading,
+  error,
+}: GeneratedMenuProps) {
   if (isLoading) {
     return (
       <div className="mt-8 p-6 bg-white rounded-lg shadow-md">
@@ -43,4 +47,4 @@ export default function GeneratedMenu({ menuData, isLoading, error }: GeneratedM
       </div>
     </div>
   );
-} 
+}

@@ -5,16 +5,13 @@ import { MenuData } from "@/types/menu";
 export async function POST(request: NextRequest) {
   try {
     const menuData: MenuData[] = await request.json();
-        
+
     if (!menuData || !Array.isArray(menuData)) {
-      return NextResponse.json(
-        { error: "Invalid menu data" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid menu data" }, { status: 400 });
     }
 
     const pdfBytes = await generateMenuPackPDF(menuData);
-    
+
     return new Response(pdfBytes, {
       status: 200,
       headers: {
@@ -29,4 +26,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}
