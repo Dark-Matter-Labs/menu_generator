@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { PDFDocument, rgb, StandardFonts, PDFFont } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { MenuData } from "@/types/menu";
 import fs from "fs";
@@ -28,8 +28,8 @@ export async function generateMenuPDF(menu: MenuData): Promise<Uint8Array> {
 async function addMenuPage(
   pdfDoc: PDFDocument,
   menu: MenuData,
-  font: any,
-  boldFont: any
+  font: PDFFont,
+  boldFont: PDFFont
 ) {
   const page = pdfDoc.addPage([595, 842]); // A4
 
@@ -90,7 +90,7 @@ async function addMenuPage(
 
   // Courses
   (["starter", "main", "dessert"] as const).forEach(course => {
-    const item = (menu as any)[course];
+    const item = menu[course];
     if (!item) return;
     const courseLabel = course.toUpperCase();
     const courseSize = 12;

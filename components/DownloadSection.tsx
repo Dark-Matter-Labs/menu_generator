@@ -1,5 +1,7 @@
+import { MenuData } from "@/types/menu";
+
 interface DownloadSectionProps {
-  menuData: any[] | null;
+  menuData: MenuData[] | null;
   isDownloading: boolean;
   error: string | null;
   onDownload: () => void;
