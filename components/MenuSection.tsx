@@ -23,8 +23,10 @@ export default function MenuSection({
     <div className="">
       {/* Menu Display */}
       {menuData && (
-        <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 px-10 py-20 grid grid-cols-1 gap-12">
-          
+        <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 px-10 py-10 grid grid-cols-1 gap-12">
+          <h2 className="text-2xl font-bold place-self-center">
+            Your dinner kit
+          </h2>
           <MenuDisplay menuData={menuData} />
           <DownloadSection
             menuData={menuData}

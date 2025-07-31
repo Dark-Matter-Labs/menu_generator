@@ -50,8 +50,10 @@ export async function POST(request: NextRequest) {
     const location = formData.get("location") as string;
     const season = formData.get("season") as string;
     const numberOfGuests = formData.get("numberOfGuests") as string;
-    const context = formData.get("context") as string;
-    const goals = formData.get("goals") as string;
+    const dinnerContext = formData.get("dinnerContext") as string;
+    const dietaryPreference = formData.get("dietaryPreference") as string;
+    const allergies = formData.get("allergies") as string;
+    const preferences = formData.get("preferences") as string;
 
     // Generate all 4 menus
     const menus = [];
@@ -59,7 +61,9 @@ export async function POST(request: NextRequest) {
     for (const [menuType, scenario] of Object.entries(futureScenarios)) {
       const prompt = `Create a 3-course menu for the year 2040 based on this scenario: ${scenario.context}
 
-Location: ${location}, Season: ${season}, Guests: ${numberOfGuests}, Context: ${context}, Goals: ${goals}
+Location: ${location}, Season: ${season}, Guests: ${numberOfGuests}, Dinner Context and Goals: ${dinnerContext}, Dietary Preference: ${dietaryPreference}${allergies ? `, Allergies: ${allergies}` : ""}${preferences ? `, Additional Preferences: ${preferences}` : ""}
+
+IMPORTANT: Calculate ingredient quantities based on ${numberOfGuests} guests. Each ingredient should be scaled appropriately for the number of people.
 
 You must respond with ONLY a valid JSON object in this exact format:
 {
@@ -78,7 +82,14 @@ You must respond with ONLY a valid JSON object in this exact format:
     "name": "Creative dish name",
     "description": "Brief description (max 250 characters)",
     "servedWith": "Accompaniments or garnishes"
-  }
+  },
+  "ingredients": [
+    {
+      "name": "ingredient name",
+      "grams": "total grams needed for all ${numberOfGuests} guests",
+      "category": "starter/main/dessert/general"
+    }
+  ]
 }
 
 CRITICAL JSON REQUIREMENTS:
@@ -88,6 +99,10 @@ CRITICAL JSON REQUIREMENTS:
 - Keep descriptions brief (max 250 characters)
 - Keep servedWith brief (max 90 characters)
 - ALWAYS include "servedWith" for all dishes with appropriate accompaniments
+- For ingredients: include ALL ingredients needed for the entire menu, scaled for ${numberOfGuests} guests
+- Ingredient quantities should be realistic and appropriate for the number of guests
+- Use "grams" as string values (e.g., "500" not 500)
+- Category should be one of: "starter", "main", "dessert", or "general"
 - Ensure all JSON syntax is valid with proper quotes and commas
 - Do not include any text before or after the JSON object
 - Do NOT add trailing commas
@@ -113,7 +128,12 @@ CRITICAL JSON REQUIREMENTS:
           menuData.type = menuType;
 
           // Validate that we have the required structure
-          if (!menuData.starter || !menuData.main || !menuData.dessert) {
+          if (
+            !menuData.starter ||
+            !menuData.main ||
+            !menuData.dessert ||
+            !menuData.ingredients
+          ) {
             throw new Error("Missing required menu structure");
           }
         } catch (parseError) {

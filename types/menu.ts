@@ -10,11 +10,18 @@ export interface MenuCourse {
   servedWith?: string;
 }
 
+export interface MenuIngredient {
+  name: string;
+  grams: string;
+  category: "starter" | "main" | "dessert" | "general";
+}
+
 export interface MenuData {
   type: MenuType;
   starter: MenuCourse;
   main: MenuCourse;
   dessert: MenuCourse;
+  ingredients: MenuIngredient[];
 }
 
 export interface ReceiptData {

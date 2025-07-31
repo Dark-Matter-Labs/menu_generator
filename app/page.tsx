@@ -3,6 +3,8 @@
 import { useState } from "react";
 import MenuForm from "@/components/MenuForm";
 import MenuSection from "@/components/MenuSection";
+import Header from "@/components/Header";
+import IngredientsSection from "@/components/IngredientsSection";
 import { MenuData } from "@/types/menu";
 
 export default function Home() {
@@ -79,28 +81,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50">
       <div className="max-w-6xl mx-auto px-6 py-12">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg">M</span>
-            </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
-              Future Menu Generator
-            </h1>
-          </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Generate menus for different future scenarios - from regenerative
-            agriculture to survival rations
-          </p>
-        </div>
-
+        <Header />
         <div className="grid grid-cols-1 gap-12">
-          {/* Form Section */}
-          <div className="grid grid-cols-1 gap-12">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8">
-              <MenuForm onSubmit={handleFormSubmit} />
-            </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8">
+            <MenuForm onSubmit={handleFormSubmit} />
           </div>
           {menuData && (
             <MenuSection
@@ -110,6 +94,8 @@ export default function Home() {
               onDownload={handleDownloadGeneratedMenus}
             />
           )}
+
+          {menuData && <IngredientsSection menuData={menuData} />}
         </div>
       </div>
     </div>
