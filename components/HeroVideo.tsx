@@ -14,8 +14,14 @@ export default function HeroVideo() {
           playsInline
           className="w-full h-full object-cover"
         >
-          <source src="https://cdn.prod.website-files.com/687a575d629ec719af0ffd2e%2F687a5914ebc0dee7255a46e7_UBNI%20High%20res%20version_2%20%281%29-transcode.webm" type="video/webm" />
-          <source src="https://cdn.prod.website-files.com/687a575d629ec719af0ffd2e%2F687a5914ebc0dee7255a46e7_UBNI%20High%20res%20version_2%20%281%29-transcode.mp4" type="video/mp4" />
+          <source
+            src="https://cdn.prod.website-files.com/687a575d629ec719af0ffd2e%2F687a5914ebc0dee7255a46e7_UBNI%20High%20res%20version_2%20%281%29-transcode.webm"
+            type="video/webm"
+          />
+          <source
+            src="https://cdn.prod.website-files.com/687a575d629ec719af0ffd2e%2F687a5914ebc0dee7255a46e7_UBNI%20High%20res%20version_2%20%281%29-transcode.mp4"
+            type="video/mp4"
+          />
           {/* Fallback for browsers that don't support video */}
           <div className="w-full h-full bg-gradient-to-br from-emerald-100 via-amber-50 to-orange-100" />
         </video>
@@ -25,9 +31,9 @@ export default function HeroVideo() {
 
       {/* Content */}
       <div className="relative z-10 flex items-center justify-center">
-        <Image 
-          src="/hero-title.svg" 
-          alt="Digesting the Future" 
+        <Image
+          src="/hero-title.svg"
+          alt="Digesting the Future"
           width={800}
           height={400}
           className="w-full max-w-4xl h-auto"
