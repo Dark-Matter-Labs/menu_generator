@@ -47,7 +47,7 @@ export function ScrollAnimatedText({
     <div
       ref={containerRef}
       className={cn(
-        "relative overflow-hidden flex items-center justify-center",
+        "relative overflow-hidden flex items-center justify-center h-12",
         className
       )}
     >
@@ -112,7 +112,7 @@ function LetterAnimation({
         y,
         opacity,
       }}
-      className="inline-block font-serif text-4xl"
+      className="inline-block font-serif text-4xl drop-shadow-lg"
     >
       {letter === " " ? "\u00A0" : letter}
     </motion.span>

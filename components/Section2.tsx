@@ -106,7 +106,7 @@ export default function Section2() {
           <div className="relative flex justify-center">
             {/* Scenario 1 */}
             <motion.h3
-              className="text-lg font-sans text-teal-500 mb-3 absolute -top-12 text-nowrap"
+              className="text-lg font-sans text-emerald-800 mb-3 absolute -top-12 text-nowrap"
               style={{
                 opacity: useTransform(
                   scenario1Progress,
@@ -136,7 +136,7 @@ export default function Section2() {
 
             {/* Scenario 2 */}
             <motion.h3
-              className="text-lg font-sans text-purple-500 mb-3 absolute -top-12 text-nowrap"
+              className="text-lg font-sans text-yellow-800 mb-3 absolute -top-12 text-nowrap"
               style={{
                 opacity: useTransform(
                   scenario2Progress,
@@ -166,7 +166,7 @@ export default function Section2() {
 
             {/* Scenario 3 */}
             <motion.h3
-              className="text-lg font-sans text-orange-500 mb-3 absolute -top-12 text-nowrap"
+              className="text-lg font-sans text-[#7A0000] mb-3 absolute -top-12 text-nowrap"
               style={{
                 opacity: useTransform(
                   scenario3Progress,
@@ -201,19 +201,19 @@ export default function Section2() {
               text="Regenerative"
               startScroll={text1.start}
               endScroll={text1.end}
-              className="text-teal-500 absolute"
+              className="text-emerald-800 absolute"
             />
             <ScrollAnimatedText
               text="Business-as-usual"
               startScroll={text3.start}
               endScroll={text3.end}
-              className="text-purple-500 absolute"
+              className="text-yellow-800 absolute"
             />
             <ScrollAnimatedText
               text="4 degree"
               startScroll={text5.start}
               endScroll={text5.end}
-              className="text-orange-500 absolute"
+              className="text-[#7A0000] absolute"
             />
           </div>
 
@@ -222,19 +222,19 @@ export default function Section2() {
               text="Food Future"
               startScroll={text2.start}
               endScroll={text2.end}
-              className="text-teal-500 absolute top-12"
+              className="text-emerald-800 absolute top-12"
             />
             <ScrollAnimatedText
               text="Degenerative Future"
               startScroll={text4.start}
               endScroll={text4.end}
-              className="text-purple-500 absolute top-12"
+              className="text-yellow-800 absolute top-12"
             />
             <ScrollAnimatedText
               text="Climate Collapse"
               startScroll={text6.start}
               endScroll={text6.end}
-              className="text-orange-500 absolute top-12"
+              className="text-[#7A0000] absolute top-12"
             />
           </div>
 
