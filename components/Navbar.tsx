@@ -115,7 +115,7 @@ export default function Navbar() {
             href="/menus"
             className="flex-1 text-center text-white font-semibold uppercase bg-yellow-400 hover:bg-yellow-300 transition-colors duration-200 py-3 rounded-sm mx-1"
           >
-            Section 5
+            Menu Generator
           </Link>
         </div>
       </div>
