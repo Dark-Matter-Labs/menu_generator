@@ -58,13 +58,13 @@ export default function Navbar() {
     <nav className="w-full sticky top-0 left-0 z-50 bg-transparent">
       <div className="w-full px-6 py-4">
         <div className="flex items-center w-full">
-          <a
+          <Link
             href="/"
             // onClick={e => handleSmoothScroll(e, "home")}
             className="flex-1 text-center text-white font-semibold uppercase bg-black/40 hover:bg-black/60 transition-colors duration-200 py-3 rounded-sm mx-1"
           >
             UBNI
-          </a>
+          </Link>
 
           <a
             href="#section1"
