@@ -6,7 +6,12 @@ import { motion, useTransform, useMotionValue } from "framer-motion";
 import { ScrollAnimatedText } from "./ScrollAnimatedText";
 
 // ----- Helpers -----
-function makeScenario(start: number, duration = 800, fadeIn = 300, fadeOut = 300) {
+function makeScenario(
+  start: number,
+  duration = 800,
+  fadeIn = 300,
+  fadeOut = 300
+) {
   const end = start + duration;
   return {
     start,
@@ -43,10 +48,10 @@ export default function Section2() {
   const image2 = { ...scenario2 };
 
   // ----- Scenario 3 -----
-  const scenario3 = makeScenario(3500); 
-  const text5 = makeText(scenario3.start, 0, 800);   // main headline
+  const scenario3 = makeScenario(3500);
+  const text5 = makeText(scenario3.start, 0, 800); // main headline
   const text6 = makeText(scenario3.start, 150, 1000); // subheadline
-  const image3 = makeScenario(3500, 1200, 300, 100); 
+  const image3 = makeScenario(3500, 1200, 300, 100);
 
   // ----- Motion Values -----
   const scenario1Progress = useMotionValue(0);
@@ -93,9 +98,9 @@ export default function Section2() {
     <section
       ref={containerRef}
       id="section2"
-      className="relative h-[250vh] bg-transparent flex items-center justify-center z-20"
+      className="relative h-[210vh] bg-transparent flex items-center justify-center z-20"
     >
-      <div className="w-full mx-10 bg-[#B3B0A4F5] h-[250vh] flex flex-col items-center justify-start pt-20">
+      <div className="w-full mx-10 bg-[#B3B0A4F5] h-[210vh] flex flex-col items-center justify-start pt-20">
         <div className="text-center sticky top-40">
           {/* Scenario titles stacked */}
           <div className="relative flex justify-center">

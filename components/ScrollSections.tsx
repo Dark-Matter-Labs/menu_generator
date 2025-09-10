@@ -20,7 +20,7 @@ export default function ScrollSections() {
       <Section2 />
 
       {/* Section 3 - Slides up over Section 2 */}
-    <Section3 />
+      <Section3 />
 
       {/* Section 4 - Slides up over Section 3 */}
       <section
