@@ -59,8 +59,8 @@ export default function Navbar() {
       <div className="w-full px-6 py-4">
         <div className="flex items-center w-full">
           <a
-            href="#home"
-            onClick={e => handleSmoothScroll(e, "home")}
+            href="/"
+            // onClick={e => handleSmoothScroll(e, "home")}
             className="flex-1 text-center text-white font-semibold uppercase bg-black/40 hover:bg-black/60 transition-colors duration-200 py-3 rounded-sm mx-1"
           >
             UBNI
@@ -76,7 +76,7 @@ export default function Navbar() {
                 rgba(255, 255, 255, 0.2) ${sectionProgress.section1 * 100}%)`,
             }}
           >
-            Section 1
+            Introduction
           </a>
 
           <a
@@ -89,7 +89,7 @@ export default function Navbar() {
                 rgba(255, 255, 255, 0.2) ${sectionProgress.section2 * 100}%)`,
             }}
           >
-            Section 2
+            Scenarios
           </a>
 
           <a
@@ -102,7 +102,7 @@ export default function Navbar() {
                 rgba(255, 255, 255, 0.2) ${sectionProgress.section3 * 100}%)`,
             }}
           >
-            Section 3
+            Modalities
           </a>
 
           <a
