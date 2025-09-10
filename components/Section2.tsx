@@ -32,10 +32,10 @@ export default function Section2() {
   return (
     <section
       id="section2"
-      className="relative h-screen bg-transparent flex items-center justify-center z-20"
+      className="relative h-[400vh] bg-transparent flex items-center justify-center z-20"
     >
-      <div className="w-full mx-10 bg-[#B3B0A4F5] h-screen flex flex-col items-center justify-start pt-20">
-        <div className="text-center">
+      <div className="w-full mx-10 bg-[#B3B0A4F5] h-[400vh] flex flex-col items-center justify-start pt-20">
+        <div className="text-center sticky top-40">
           <h3 className="text-lg font-sans text-teal-500">Scenario 1</h3>
           <h2 className="text-4xl font-serif text-teal-500 leading-tight text-center">
             <div className="flex flex-col items-center">
