@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useMotionValue } from "framer-motion";
+import { motion, useTransform, useMotionValue, MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface ScrollAnimatedTextProps {
@@ -70,7 +70,7 @@ interface LetterAnimationProps {
   letter: string;
   index: number;
   totalLetters: number;
-  scrollProgress: any;
+  scrollProgress: MotionValue<number>;
 }
 
 function LetterAnimation({

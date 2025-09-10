@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFFont } from "pdf-lib";
+import { PDFDocument, rgb, PDFFont } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { MenuData } from "@/types/menu";
 import fs from "fs";
