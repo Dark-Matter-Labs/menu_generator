@@ -48,7 +48,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full sticky top-0 left-0 z-20 bg-transparent">
+    <nav className="w-full sticky top-0 left-0 z-50 bg-transparent">
       <div className="w-full px-6 py-4">
         <div className="flex items-center w-full">
           <a
@@ -65,8 +65,8 @@ export default function Navbar() {
             className="flex-1 text-center text-white font-semibold uppercase py-3 rounded-sm mx-1 relative overflow-hidden"
             style={{
               background: `linear-gradient(90deg, 
-                rgba(255, 255, 255, 0.9) ${sectionProgress.home * 100}%, 
-                rgba(255, 255, 255, 0.2) ${sectionProgress.home * 100}%)`
+                rgba(255, 255, 255, 0.9) ${sectionProgress.section1 * 100}%, 
+                rgba(255, 255, 255, 0.2) ${sectionProgress.section1 * 100}%)`
             }}
           >
             Section 1
@@ -78,8 +78,8 @@ export default function Navbar() {
             className="flex-1 text-center text-white font-semibold uppercase py-3 rounded-sm mx-1 relative overflow-hidden"
             style={{
               background: `linear-gradient(90deg, 
-                rgba(255, 255, 255, 0.9) ${sectionProgress.section1 * 100}%, 
-                rgba(255, 255, 255, 0.2) ${sectionProgress.section1 * 100}%)`
+                rgba(255, 255, 255, 0.9) ${sectionProgress.section2 * 100}%, 
+                rgba(255, 255, 255, 0.2) ${sectionProgress.section2 * 100}%)`
             }}
           >
             Section 2
@@ -91,8 +91,8 @@ export default function Navbar() {
             className="flex-1 text-center text-white font-semibold uppercase py-3 rounded-sm mx-1 relative overflow-hidden"
             style={{
               background: `linear-gradient(90deg, 
-                rgba(255, 255, 255, 0.9) ${sectionProgress.section2 * 100}%, 
-                rgba(255, 255, 255, 0.2) ${sectionProgress.section2 * 100}%)`
+                rgba(255, 255, 255, 0.9) ${sectionProgress.section3 * 100}%, 
+                rgba(255, 255, 255, 0.2) ${sectionProgress.section3 * 100}%)`
             }}
           >
             Section 3
@@ -104,8 +104,8 @@ export default function Navbar() {
             className="flex-1 text-center text-white font-semibold uppercase py-3 rounded-sm mx-1 relative overflow-hidden"
             style={{
               background: `linear-gradient(90deg, 
-                rgba(255, 255, 255, 0.9) ${sectionProgress.section3 * 100}%, 
-                rgba(255, 255, 255, 0.2) ${sectionProgress.section3 * 100}%)`
+                rgba(255, 255, 255, 0.9) ${sectionProgress.section4 * 100}%, 
+                rgba(255, 255, 255, 0.2) ${sectionProgress.section4 * 100}%)`
             }}
           >
             Section 4
