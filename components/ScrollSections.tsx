@@ -1,5 +1,6 @@
 import HeroVideo from "./HeroVideo";
 import Section1 from "./Section1";
+import Section2 from "./Section2";
 
 export default function ScrollSections() {
   return (
@@ -15,12 +16,7 @@ export default function ScrollSections() {
       </div>
 
       {/* Section 2 - Slides up over Section 1 */}
-      <section
-        id="section2"
-        className="relative min-h-screen bg-blue-500 flex items-center justify-center z-20"
-      >
-        <h2 className="text-6xl font-bold text-white">Section 2</h2>
-      </section>
+      <Section2 />
 
       {/* Section 3 - Slides up over Section 2 */}
       <section
