@@ -3,20 +3,18 @@
 import { useState } from "react";
 import MenuForm from "@/components/menu-generator/MenuForm";
 import MenuSection from "@/components/menu-generator/MenuSection";
-import Header from "@/components/Header";
+import Header from "@/components/menu-generator/Header";
 import IngredientsSection from "@/components/menu-generator/IngredientsSection";
 import FoodGroupSection from "@/components/menu-generator/FoodGroupSection";
 import { MenuData } from "@/types/menu";
 
 export default function MenusPage() {
   const [menuData, setMenuData] = useState<MenuData[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<string>('austria');
+  const [selectedCountry, setSelectedCountry] = useState<string>("austria");
 
   const handleFormSubmit = async (formData: FormData) => {
-    setIsLoading(true);
     setError(null);
     setMenuData(null);
 
@@ -43,8 +41,6 @@ export default function MenusPage() {
       setMenuData(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate menus");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -84,7 +80,7 @@ export default function MenusPage() {
       setIsDownloading(false);
     }
   };
-  console.log(menuData)
+  console.log(menuData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-amber-50">
@@ -104,8 +100,9 @@ export default function MenusPage() {
           )}
 
           {menuData && <IngredientsSection menuData={menuData} />}
-          {menuData && <FoodGroupSection menuData={menuData} countryId={selectedCountry} />}
-          
+          {menuData && (
+            <FoodGroupSection menuData={menuData} countryId={selectedCountry} />
+          )}
         </div>
       </div>
     </div>

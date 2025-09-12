@@ -1,4 +1,4 @@
-import ScrollSections from "@/components/ScrollSections";
+import ScrollSections from "@/components/landing-page/ScrollSections";
 
 export default function Home() {
   return (

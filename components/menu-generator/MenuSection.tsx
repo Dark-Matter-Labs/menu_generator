@@ -1,6 +1,6 @@
 import { MenuData } from "@/types/menu";
 import MenuDisplay from "@/components/menu-generator/MenuDisplay";
-import DownloadSection from "@/components/DownloadSection";
+import DownloadSection from "@/components/menu-generator/DownloadSection";
 
 interface MenuSectionProps {
   menuData: MenuData[] | null;

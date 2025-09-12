@@ -39,7 +39,7 @@ export default function Section2() {
   const scenario1 = makeScenario(2400);
   const text1 = makeText(scenario1.start, 0, 700); // 2400–3100
   const text2 = makeText(scenario1.start, 150, 850); // 2550–3250
-  const image1 = makeScenario(2400);// same as scenario
+  const image1 = makeScenario(2400); // same as scenario
 
   // ----- Scenario 2 -----
   const scenario2 = makeScenario(2950);

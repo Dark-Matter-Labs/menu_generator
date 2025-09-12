@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useTransform, useMotionValue, MotionValue } from "framer-motion";
+import {
+  motion,
+  useTransform,
+  useMotionValue,
+  MotionValue,
+} from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface ScrollAnimatedTextProps {

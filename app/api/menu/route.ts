@@ -51,30 +51,44 @@ IMPORTANT: All ingredients used in menus must be categorized into these exact fo
   },
 };
 
-
 // Function to calculate food group totals
-function calculateFoodGroupTotals(ingredients: { name: string; grams: string; category: string; foodGroup: string }[], numberOfGuests: number) {
-  const totals: { [key: string]: { totalGrams: number; perPersonGrams: number } } = {};
-  
-  console.log(`calculateFoodGroupTotals called with ${ingredients.length} ingredients and ${numberOfGuests} guests`);
-  
+function calculateFoodGroupTotals(
+  ingredients: {
+    name: string;
+    grams: string;
+    category: string;
+    foodGroup: string;
+  }[],
+  numberOfGuests: number
+) {
+  const totals: {
+    [key: string]: { totalGrams: number; perPersonGrams: number };
+  } = {};
+
+  console.log(
+    `calculateFoodGroupTotals called with ${ingredients.length} ingredients and ${numberOfGuests} guests`
+  );
+
   ingredients.forEach(ingredient => {
     const foodGroup = ingredient.foodGroup;
     const grams = parseFloat(ingredient.grams) || 0;
-    
+
     if (!totals[foodGroup]) {
       totals[foodGroup] = { totalGrams: 0, perPersonGrams: 0 };
     }
-    
+
     totals[foodGroup].totalGrams += grams;
   });
-  
+
   // Calculate per-person values
   Object.keys(totals).forEach(foodGroup => {
-    totals[foodGroup].perPersonGrams = totals[foodGroup].totalGrams / numberOfGuests;
-    console.log(`${foodGroup}: ${totals[foodGroup].totalGrams}g total, ${totals[foodGroup].perPersonGrams}g per person`);
+    totals[foodGroup].perPersonGrams =
+      totals[foodGroup].totalGrams / numberOfGuests;
+    console.log(
+      `${foodGroup}: ${totals[foodGroup].totalGrams}g total, ${totals[foodGroup].perPersonGrams}g per person`
+    );
   });
-  
+
   return totals;
 }
 
@@ -98,7 +112,7 @@ export async function POST(request: NextRequest) {
       dinnerContext,
       dietaryPreference,
       allergies,
-      preferences
+      preferences,
     });
 
     // Generate all 4 menus
@@ -108,7 +122,7 @@ export async function POST(request: NextRequest) {
       let menuData;
       let attempts = 0;
       const maxAttempts = 3;
-      
+
       while (attempts < maxAttempts) {
         try {
           const prompt = `Create a 3-course menu for the year 2040 based on this scenario: ${scenario.context}
@@ -187,7 +201,7 @@ CRITICAL JSON REQUIREMENTS:
           const result = await model.generateContent(prompt);
           const response = await result.response;
           const generatedText = response.text();
-          
+
           // Try to extract JSON from the response
           menuData = JSON.parse(generatedText);
           // Ensure the type is correct
@@ -205,43 +219,76 @@ CRITICAL JSON REQUIREMENTS:
 
           // Validate that all food groups match our constants exactly
           const validFoodGroups = Object.values(FOOD_GROUPS);
-          const invalidIngredients = menuData.ingredients.filter((ingredient: { name: string; grams: string; category: string; foodGroup?: string }) => 
-            !ingredient.foodGroup || !validFoodGroups.includes(ingredient.foodGroup as typeof FOOD_GROUPS[keyof typeof FOOD_GROUPS])
+          const invalidIngredients = menuData.ingredients.filter(
+            (ingredient: {
+              name: string;
+              grams: string;
+              category: string;
+              foodGroup?: string;
+            }) =>
+              !ingredient.foodGroup ||
+              !validFoodGroups.includes(
+                ingredient.foodGroup as (typeof FOOD_GROUPS)[keyof typeof FOOD_GROUPS]
+              )
           );
-          
+
           if (invalidIngredients.length > 0) {
-            console.error(`Invalid food groups found in attempt ${attempts + 1}:`, invalidIngredients.map((i: { name: string; foodGroup?: string }) => `${i.name}: "${i.foodGroup}"`));
-            throw new Error(`Invalid food groups detected. All ingredients must use exact food group names from the provided list.`);
+            console.error(
+              `Invalid food groups found in attempt ${attempts + 1}:`,
+              invalidIngredients.map(
+                (i: { name: string; foodGroup?: string }) =>
+                  `${i.name}: "${i.foodGroup}"`
+              )
+            );
+            throw new Error(
+              `Invalid food groups detected. All ingredients must use exact food group names from the provided list.`
+            );
           }
-          
+
           // LLM should provide food group categorization - no fallback needed
           // Just ensure the foodGroup property exists
-          menuData.ingredients = menuData.ingredients.map((ingredient: { name: string; grams: string; category: string; foodGroup?: string }) => ({
-            ...ingredient,
-            foodGroup: ingredient.foodGroup || "Vegetables" // Simple fallback only if completely missing
-          }));
+          menuData.ingredients = menuData.ingredients.map(
+            (ingredient: {
+              name: string;
+              grams: string;
+              category: string;
+              foodGroup?: string;
+            }) => ({
+              ...ingredient,
+              foodGroup: ingredient.foodGroup || "Vegetables", // Simple fallback only if completely missing
+            })
+          );
 
           // Calculate food group totals
           const guestCount = parseInt(numberOfGuests) || 1; // Default to 1 if parsing fails
-          console.log(`Calculating food group totals for ${guestCount} guests (original: ${numberOfGuests})`);
-          menuData.foodGroupTotals = calculateFoodGroupTotals(menuData.ingredients, guestCount);
-          
+          console.log(
+            `Calculating food group totals for ${guestCount} guests (original: ${numberOfGuests})`
+          );
+          menuData.foodGroupTotals = calculateFoodGroupTotals(
+            menuData.ingredients,
+            guestCount
+          );
+
           // If we get here, the menu is valid
           break;
-          
         } catch (error) {
           attempts++;
-          console.error(`Error generating menu for ${menuType} (attempt ${attempts}):`, error);
-          
+          console.error(
+            `Error generating menu for ${menuType} (attempt ${attempts}):`,
+            error
+          );
+
           if (attempts >= maxAttempts) {
-            throw new Error(`Failed to generate valid menu for ${menuType} after ${maxAttempts} attempts: ${error}`);
+            throw new Error(
+              `Failed to generate valid menu for ${menuType} after ${maxAttempts} attempts: ${error}`
+            );
           }
-          
+
           // Wait a bit before retrying
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
-      
+
       menus.push(menuData);
     }
 
