@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { FOOD_GROUPS } from "../../test/constants";
+import { FOOD_GROUPS } from "@/lib/constants";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -15,7 +15,9 @@ Food has become a central part of the healthcare system, where UBNI is used to p
 UBNI - Work for Food
 The "Work for Food" model has become part of the city's culture and infrastructure. Work contracts now include an agreement where employees trade one work day/week for a day of participating in the local food system. This model has made cities self-sufficient in food, reduced dependence on global markets, strengthened the social connections and ensured that all neighborhoods have access to fresh, nutritious food.
 
-The food culture is vibrant and delicious - think regenerative agriculture, locally sourced ingredients, seasonal menus, and innovative cooking techniques that prioritize both taste and nutrition. Restaurants and home cooks alike focus on creating meals that are both satisfying and health-promoting.`,
+The food culture is vibrant and delicious - think regenerative agriculture, locally sourced ingredients, seasonal menus, and innovative cooking techniques that prioritize both taste and nutrition. Restaurants and home cooks alike focus on creating meals that are both satisfying and health-promoting.
+
+IMPORTANT: All ingredients used in menus must be categorized into these exact food groups: Grains, Roots/Starchy Veg, Sugar, Legumes, Nuts & Seeds, Oils, Vegetables, Fruits, Stimulants & Spices, Beef & Lamb, Pork, Poultry, Eggs, Fish, Dairy. Do not use any other food group categories.`,
   },
   FutureTwo: {
     name: "Business as Usual",
@@ -23,7 +25,9 @@ The food culture is vibrant and delicious - think regenerative agriculture, loca
 
 Many urban neighborhoods have become "food deserts," where access to fresh vegetables and nutritious food is severely limited. Economic disparities have grown, and societal problems such as social isolation, stress, and mental illness have increased. Despite the knowledge of sustainable and healthy food production, there is a lack of incentives and structures to change consumption patterns. The food system continues to be driven by short-term economic gains rather than long-term sustainability, deepening social and health gaps in society.
 
-The typical diet consists of heavily processed, mass-produced foods from supermarkets - think frozen meals, canned goods, instant noodles, processed meats, sugary drinks, and convenience foods. Fresh produce is expensive and often of poor quality, while cheap, calorie-dense processed foods dominate the market.`,
+The typical diet consists of heavily processed, mass-produced foods from supermarkets - think frozen meals, canned goods, instant noodles, processed meats, sugary drinks, and convenience foods. Fresh produce is expensive and often of poor quality, while cheap, calorie-dense processed foods dominate the market.
+
+IMPORTANT: All ingredients used in menus must be categorized into these exact food groups: Grains, Roots/Starchy Veg, Sugar, Legumes, Nuts & Seeds, Oils, Vegetables, Fruits, Stimulants & Spices, Beef & Lamb, Pork, Poultry, Eggs, Fish, Dairy. Do not use any other food group categories.`,
   },
   FutureThree: {
     name: "Collapse Scenario",
@@ -31,7 +35,9 @@ The typical diet consists of heavily processed, mass-produced foods from superma
 
 Municipalities have been forced to adapt to a new reality, focusing entirely on the survival of as many people as possible. Citizens receive nutrition packages from the authorities containing what can still be produced in labs: algae protein tablets, nutrient-dense meal replacements, vitamin supplements, and lab-grown carbohydrates. Food has completely lost its cultural significance and has become merely a necessity for survival. You have witnessed the dramatic transformation of society. Fresh and nutritious food is almost impossible to find, and what little exists is mostly emergency aid or synthetic production. Municipal contributions ensure that everyone gets enough nutrients to survive, but they cannot meet the diverse needs of individuals.
 
-The diet consists entirely of functional nutrition - protein powders, vitamin tablets, meal replacement shakes, algae-based supplements, synthetic carbohydrates, and fortified survival rations. There's no real cooking or dining experience, just the mechanical consumption of nutrients to stay alive.`,
+The diet consists entirely of functional nutrition - protein powders, vitamin tablets, meal replacement shakes, algae-based supplements, synthetic carbohydrates, and fortified survival rations. There's no real cooking or dining experience, just the mechanical consumption of nutrients to stay alive.
+
+IMPORTANT: All ingredients used in menus must be categorized into these exact food groups: Grains, Roots/Starchy Veg, Sugar, Legumes, Nuts & Seeds, Oils, Vegetables, Fruits, Stimulants & Spices, Beef & Lamb, Pork, Poultry, Eggs, Fish, Dairy. Do not use any other food group categories.`,
   },
   FutureThreeB: {
     name: "Collapse Scenario with Extras",
@@ -39,150 +45,18 @@ The diet consists entirely of functional nutrition - protein powders, vitamin ta
 
 Municipalities have been forced to adapt to a new reality, focusing entirely on the survival of as many people as possible. Citizens receive nutrition packages from the authorities containing what can still be produced in labs: algae protein tablets, nutrient-dense meal replacements, vitamin supplements, and lab-grown carbohydrates. Food has completely lost its cultural significance and has become merely a necessity for survival. You have witnessed the dramatic transformation of society. Fresh and nutritious food is almost impossible to find, and what little exists is mostly emergency aid or synthetic production. Municipal contributions ensure that everyone gets enough nutrients to survive, but they cannot meet the diverse needs of individuals.
 
-However, you have access to some additional resources and can occasionally source some traditional ingredients, allowing for slightly more varied meals than the standard ration packages. You might be able to grow a small garden, trade for fresh vegetables, or have access to some preserved foods. This allows for a basic salad or fresh garnish to accompany the functional nutrition supplements.`,
+However, you have access to some additional resources and can occasionally source some traditional ingredients, allowing for slightly more varied meals than the standard ration packages. You might be able to grow a small garden, trade for fresh vegetables, or have access to some preserved foods. This allows for a basic salad or fresh garnish to accompany the functional nutrition supplements.
+
+IMPORTANT: All ingredients used in menus must be categorized into these exact food groups: Grains, Roots/Starchy Veg, Sugar, Legumes, Nuts & Seeds, Oils, Vegetables, Fruits, Stimulants & Spices, Beef & Lamb, Pork, Poultry, Eggs, Fish, Dairy. Do not use any other food group categories.`,
   },
 };
 
-// Function to categorize ingredients into food groups (fallback when LLM doesn't provide foodGroup)
-function categorizeIngredient(ingredientName: string): string {
-  const name = ingredientName.toLowerCase();
-  
-  // Grains
-  if (name.includes('rice') || name.includes('wheat') || name.includes('barley') || 
-      name.includes('oats') || name.includes('quinoa') || name.includes('millet') ||
-      name.includes('buckwheat') || name.includes('rye') || name.includes('corn') ||
-      name.includes('bread') || name.includes('pasta') || name.includes('noodles') ||
-      name.includes('flour') || name.includes('grain')) {
-    return FOOD_GROUPS.GRAINS;
-  }
-  
-  // Roots/Starchy Vegetables
-  if (name.includes('potato') || name.includes('sweet potato') || name.includes('yam') ||
-      name.includes('cassava') || name.includes('taro') || name.includes('plantain') ||
-      name.includes('beetroot') || name.includes('turnip') || name.includes('parsnip')) {
-    return FOOD_GROUPS.ROOTS_STARCHY_VEG;
-  }
-  
-  // Sugar
-  if (name.includes('sugar') || name.includes('honey') || name.includes('syrup') ||
-      name.includes('molasses') || name.includes('agave') || name.includes('maple') ||
-      name.includes('stevia') || name.includes('artificial sweetener')) {
-    return FOOD_GROUPS.SUGAR;
-  }
-  
-  // Legumes
-  if (name.includes('bean') || name.includes('lentil') || name.includes('chickpea') ||
-      name.includes('pea') || name.includes('soy') || name.includes('tofu') ||
-      name.includes('tempeh') || name.includes('edamame') || name.includes('lupin')) {
-    return FOOD_GROUPS.LEGUMES;
-  }
-  
-  // Nuts & Seeds
-  if (name.includes('nut') || name.includes('seed') || name.includes('almond') ||
-      name.includes('walnut') || name.includes('cashew') || name.includes('pistachio') ||
-      name.includes('hazelnut') || name.includes('pecan') || name.includes('sunflower') ||
-      name.includes('pumpkin') || name.includes('sesame') || name.includes('chia') ||
-      name.includes('flax') || name.includes('hemp')) {
-    return FOOD_GROUPS.NUTS_SEEDS;
-  }
-  
-  // Oils
-  if (name.includes('oil') || name.includes('butter') || name.includes('margarine') ||
-      name.includes('ghee') || name.includes('lard') || name.includes('shortening') ||
-      name.includes('coconut oil') || name.includes('olive oil') || name.includes('sunflower oil')) {
-    return FOOD_GROUPS.OILS;
-  }
-  
-  // Vegetables
-  if (name.includes('tomato') || name.includes('onion') || name.includes('garlic') ||
-      name.includes('carrot') || name.includes('celery') || name.includes('pepper') ||
-      name.includes('cucumber') || name.includes('lettuce') || name.includes('spinach') ||
-      name.includes('kale') || name.includes('broccoli') || name.includes('cauliflower') ||
-      name.includes('cabbage') || name.includes('zucchini') || name.includes('eggplant') ||
-      name.includes('mushroom') || name.includes('herb') || name.includes('basil') ||
-      name.includes('parsley') || name.includes('cilantro') || name.includes('dill') ||
-      name.includes('thyme') || name.includes('oregano') || name.includes('rosemary') ||
-      name.includes('vegetable') || name.includes('leafy green') || name.includes('squash')) {
-    return FOOD_GROUPS.VEGETABLES;
-  }
-  
-  // Fruits
-  if (name.includes('apple') || name.includes('banana') || name.includes('orange') ||
-      name.includes('lemon') || name.includes('lime') || name.includes('grape') ||
-      name.includes('berry') || name.includes('strawberry') || name.includes('blueberry') ||
-      name.includes('raspberry') || name.includes('blackberry') || name.includes('cherry') ||
-      name.includes('peach') || name.includes('pear') || name.includes('plum') ||
-      name.includes('mango') || name.includes('pineapple') || name.includes('coconut') ||
-      name.includes('avocado') || name.includes('fig') || name.includes('date') ||
-      name.includes('fruit') || name.includes('citrus')) {
-    return FOOD_GROUPS.FRUITS;
-  }
-  
-  // Stimulants & Spices
-  if (name.includes('coffee') || name.includes('tea') || name.includes('cocoa') ||
-      name.includes('chocolate') || name.includes('cinnamon') || name.includes('ginger') ||
-      name.includes('turmeric') || name.includes('cumin') || name.includes('coriander') ||
-      name.includes('cardamom') || name.includes('clove') || name.includes('nutmeg') ||
-      name.includes('pepper') || name.includes('salt') || name.includes('vanilla') ||
-      name.includes('spice') || name.includes('seasoning') || name.includes('condiment')) {
-    return FOOD_GROUPS.STIMULANTS_SPICES;
-  }
-  
-  // Beef & Lamb
-  if (name.includes('beef') || name.includes('lamb') || name.includes('mutton') ||
-      name.includes('veal') || name.includes('steak') || name.includes('roast beef') ||
-      name.includes('ground beef') || name.includes('lamb chop') || name.includes('leg of lamb')) {
-    return FOOD_GROUPS.BEEF_LAMB;
-  }
-  
-  // Pork
-  if (name.includes('pork') || name.includes('bacon') || name.includes('ham') ||
-      name.includes('sausage') || name.includes('pork chop') || name.includes('pork tenderloin') ||
-      name.includes('prosciutto') || name.includes('pancetta') || name.includes('chorizo')) {
-    return FOOD_GROUPS.PORK;
-  }
-  
-  // Poultry
-  if (name.includes('chicken') || name.includes('turkey') || name.includes('duck') ||
-      name.includes('goose') || name.includes('quail') || name.includes('pheasant') ||
-      name.includes('poultry') || name.includes('breast') || name.includes('thigh') ||
-      name.includes('wing') || name.includes('drumstick')) {
-    return FOOD_GROUPS.POULTRY;
-  }
-  
-  // Eggs
-  if (name.includes('egg') || name.includes('yolk') || name.includes('white') ||
-      name.includes('quail egg') || name.includes('duck egg')) {
-    return FOOD_GROUPS.EGGS;
-  }
-  
-  // Fish
-  if (name.includes('fish') || name.includes('salmon') || name.includes('tuna') ||
-      name.includes('cod') || name.includes('halibut') || name.includes('trout') ||
-      name.includes('mackerel') || name.includes('sardine') || name.includes('anchovy') ||
-      name.includes('seafood') || name.includes('shrimp') || name.includes('crab') ||
-      name.includes('lobster') || name.includes('mussel') || name.includes('oyster') ||
-      name.includes('clam') || name.includes('scallop') || name.includes('squid') ||
-      name.includes('octopus') || name.includes('seaweed') || name.includes('algae')) {
-    return FOOD_GROUPS.FISH;
-  }
-  
-  // Dairy
-  if (name.includes('milk') || name.includes('cheese') || name.includes('yogurt') ||
-      name.includes('cream') || name.includes('butter') || name.includes('sour cream') ||
-      name.includes('cottage cheese') || name.includes('ricotta') || name.includes('mozzarella') ||
-      name.includes('cheddar') || name.includes('parmesan') || name.includes('feta') ||
-      name.includes('goat cheese') || name.includes('dairy') || name.includes('whey')) {
-    return FOOD_GROUPS.DAIRY;
-  }
-  
-  // Default fallback - if we can't categorize, assume it's a vegetable
-  return FOOD_GROUPS.VEGETABLES;
-}
 
 // Function to calculate food group totals
 function calculateFoodGroupTotals(ingredients: { name: string; grams: string; category: string; foodGroup: string }[], numberOfGuests: number) {
   const totals: { [key: string]: { totalGrams: number; perPersonGrams: number } } = {};
+  
+  console.log(`calculateFoodGroupTotals called with ${ingredients.length} ingredients and ${numberOfGuests} guests`);
   
   ingredients.forEach(ingredient => {
     const foodGroup = ingredient.foodGroup;
@@ -198,6 +72,7 @@ function calculateFoodGroupTotals(ingredients: { name: string; grams: string; ca
   // Calculate per-person values
   Object.keys(totals).forEach(foodGroup => {
     totals[foodGroup].perPersonGrams = totals[foodGroup].totalGrams / numberOfGuests;
+    console.log(`${foodGroup}: ${totals[foodGroup].totalGrams}g total, ${totals[foodGroup].perPersonGrams}g per person`);
   });
   
   return totals;
@@ -216,17 +91,33 @@ export async function POST(request: NextRequest) {
     const allergies = formData.get("allergies") as string;
     const preferences = formData.get("preferences") as string;
 
+    console.log("Form data received:", {
+      location,
+      season,
+      numberOfGuests,
+      dinnerContext,
+      dietaryPreference,
+      allergies,
+      preferences
+    });
+
     // Generate all 4 menus
     const menus = [];
 
     for (const [menuType, scenario] of Object.entries(futureScenarios)) {
-      const prompt = `Create a 3-course menu for the year 2040 based on this scenario: ${scenario.context}
+      let menuData;
+      let attempts = 0;
+      const maxAttempts = 3;
+      
+      while (attempts < maxAttempts) {
+        try {
+          const prompt = `Create a 3-course menu for the year 2040 based on this scenario: ${scenario.context}
 
 Location: ${location}, Season: ${season}, Guests: ${numberOfGuests}, Dinner Context and Goals: ${dinnerContext}, Dietary Preference: ${dietaryPreference}${allergies ? `, Allergies: ${allergies}` : ""}${preferences ? `, Additional Preferences: ${preferences}` : ""}
 
 IMPORTANT: Calculate ingredient quantities based on ${numberOfGuests} guests. Each ingredient should be scaled appropriately for the number of people.
 
-FOOD GROUP CATEGORIZATION: For each ingredient, categorize it into the appropriate food group from this list:
+FOOD GROUP CATEGORIZATION: For each ingredient, categorize it into the appropriate food group from this EXACT list. You MUST NOT create any new categories, food groups, or use "general" or any other category names. Only use the exact names provided below:
 - "Grains" (rice, wheat, barley, oats, quinoa, millet, buckwheat, rye, corn, bread, pasta, noodles, flour)
 - "Roots/Starchy Veg" (potatoes, sweet potatoes, yams, cassava, taro, plantains, beetroot, turnips, parsnips)
 - "Sugar" (sugar, honey, syrup, molasses, agave, maple, stevia, artificial sweeteners)
@@ -242,6 +133,8 @@ FOOD GROUP CATEGORIZATION: For each ingredient, categorize it into the appropria
 - "Eggs" (eggs, egg yolks, egg whites, quail eggs, duck eggs)
 - "Fish" (fish, salmon, tuna, cod, halibut, trout, mackerel, sardines, anchovies, seafood, shrimp, crab, lobster, mussels, oysters, clams, scallops, squid, octopus, seaweed, algae)
 - "Dairy" (milk, cheese, yogurt, cream, sour cream, cottage cheese, ricotta, mozzarella, cheddar, parmesan, feta, goat cheese, whey)
+
+CRITICAL: Every ingredient MUST be assigned to one of the above food groups exactly as written. Do NOT use "general", "other", "miscellaneous", or any other category names. If an ingredient doesn't clearly fit, choose the closest match from the list above.
 
 You must respond with ONLY a valid JSON object in this exact format:
 {
@@ -290,19 +183,12 @@ CRITICAL JSON REQUIREMENTS:
 - Ensure every property has a valid value
 - Test your JSON syntax before responding`;
 
-      try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const generatedText = response.text();
-
-        console.log(`Raw response for ${menuType}:`, generatedText);
-
-        // Try to extract JSON from the response
-        let menuData;
-        try {
-          // Parse the entire response as JSON
+          const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          const generatedText = response.text();
+          
+          // Try to extract JSON from the response
           menuData = JSON.parse(generatedText);
           // Ensure the type is correct
           menuData.type = menuType;
@@ -317,24 +203,46 @@ CRITICAL JSON REQUIREMENTS:
             throw new Error("Missing required menu structure");
           }
 
-          // Ensure all ingredients have food group categorization (LLM should provide this, but fallback if needed)
+          // Validate that all food groups match our constants exactly
+          const validFoodGroups = Object.values(FOOD_GROUPS);
+          const invalidIngredients = menuData.ingredients.filter((ingredient: { name: string; grams: string; category: string; foodGroup?: string }) => 
+            !ingredient.foodGroup || !validFoodGroups.includes(ingredient.foodGroup as typeof FOOD_GROUPS[keyof typeof FOOD_GROUPS])
+          );
+          
+          if (invalidIngredients.length > 0) {
+            console.error(`Invalid food groups found in attempt ${attempts + 1}:`, invalidIngredients.map((i: { name: string; foodGroup?: string }) => `${i.name}: "${i.foodGroup}"`));
+            throw new Error(`Invalid food groups detected. All ingredients must use exact food group names from the provided list.`);
+          }
+          
+          // LLM should provide food group categorization - no fallback needed
+          // Just ensure the foodGroup property exists
           menuData.ingredients = menuData.ingredients.map((ingredient: { name: string; grams: string; category: string; foodGroup?: string }) => ({
             ...ingredient,
-            foodGroup: ingredient.foodGroup || categorizeIngredient(ingredient.name)
+            foodGroup: ingredient.foodGroup || "Vegetables" // Simple fallback only if completely missing
           }));
 
           // Calculate food group totals
-          menuData.foodGroupTotals = calculateFoodGroupTotals(menuData.ingredients, parseInt(numberOfGuests));
-        } catch (parseError) {
-          console.error(`JSON parsing failed for ${menuType}:`, parseError);
-          throw new Error(`Failed to parse JSON for ${menuType}`);
+          const guestCount = parseInt(numberOfGuests) || 1; // Default to 1 if parsing fails
+          console.log(`Calculating food group totals for ${guestCount} guests (original: ${numberOfGuests})`);
+          menuData.foodGroupTotals = calculateFoodGroupTotals(menuData.ingredients, guestCount);
+          
+          // If we get here, the menu is valid
+          break;
+          
+        } catch (error) {
+          attempts++;
+          console.error(`Error generating menu for ${menuType} (attempt ${attempts}):`, error);
+          
+          if (attempts >= maxAttempts) {
+            throw new Error(`Failed to generate valid menu for ${menuType} after ${maxAttempts} attempts: ${error}`);
+          }
+          
+          // Wait a bit before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
-
-        menus.push(menuData);
-      } catch (error) {
-        console.error(`Error generating menu for ${menuType}:`, error);
-        throw new Error(`Failed to generate menu for ${menuType}: ${error}`);
       }
+      
+      menus.push(menuData);
     }
 
     console.log("Generated menus count:", menus.length);

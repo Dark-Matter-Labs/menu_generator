@@ -53,7 +53,15 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
     e.preventDefault();
     setIsLoading(true);
 
-    const submitFormData = new FormData(e.currentTarget);
+    // Create FormData manually with state values since we're using controlled components
+    const submitFormData = new FormData();
+    submitFormData.append("location", formData.location);
+    submitFormData.append("season", formData.season);
+    submitFormData.append("numberOfGuests", formData.numberOfGuests);
+    submitFormData.append("dinnerContext", formData.dinnerContext);
+    submitFormData.append("dietaryPreference", formData.dietaryPreference);
+    submitFormData.append("allergies", formData.allergies);
+    submitFormData.append("preferences", formData.preferences);
 
     try {
       await onSubmit(submitFormData);

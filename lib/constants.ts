@@ -323,14 +323,8 @@ export const getCountryData = (countryId: string) => {
   return countryData.find(country => country.id === countryId);
 };
 
-// Helper function to get all impact types
-const getAllImpactTypes = () => Object.values(IMPACT_TYPES);
-
-// Helper function to get all reference standards  
-const getAllReferenceStandards = () => Object.values(REFERENCE_STANDARDS);
-
 // Helper function to get food data by country and food ID
-const getFoodDataById = (countryId: string, foodId: string): FoodImpactData | undefined => {
+export const getFoodDataById = (countryId: string, foodId: string): FoodImpactData | undefined => {
   const countryFoods = countryFoodData[countryId as keyof typeof countryFoodData];
   return countryFoods?.find(food => food.id === foodId);
 };
@@ -344,12 +338,4 @@ export const getCountryFoodData = (countryId: string): FoodImpactData[] => {
 export const getAllFoodIds = (): string[] => {
   const austriaFoods = countryFoodData.austria;
   return austriaFoods.map(food => food.id);
-};
-
-// Helper function to get all food groups
-const getAllFoodGroups = () => Object.values(FOOD_GROUPS);
-
-// Helper function to get all country IDs that have food data
-const getCountriesWithFoodData = (): string[] => {
-  return Object.keys(countryFoodData);
 };
