@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import MenuForm from "@/components/MenuForm";
-import MenuSection from "@/components/MenuSection";
+import MenuForm from "@/components/menu-generator/MenuForm";
+import MenuSection from "@/components/menu-generator/MenuSection";
 import Header from "@/components/Header";
-import IngredientsSection from "@/components/IngredientsSection";
+import IngredientsSection from "@/components/menu-generator/IngredientsSection";
 import { MenuData } from "@/types/menu";
 
 export default function MenusPage() {

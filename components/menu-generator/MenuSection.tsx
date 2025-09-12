@@ -1,5 +1,5 @@
 import { MenuData } from "@/types/menu";
-import MenuDisplay from "@/components/MenuDisplay";
+import MenuDisplay from "@/components/menu-generator/MenuDisplay";
 import DownloadSection from "@/components/DownloadSection";
 
 interface MenuSectionProps {

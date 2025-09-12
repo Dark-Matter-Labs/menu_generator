@@ -90,15 +90,26 @@ export default function MenuForm({ onSubmit }: MenuFormProps) {
                 >
                   Location
                 </Label>
-                <Input
-                  id="location"
+                <Select
                   name="location"
-                  placeholder="e.g., Brussels, Tokyo, New York"
-                  className="h-12 px-4 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-xl transition-all duration-200"
                   value={formData.location}
-                  onChange={handleInputChange}
-                  required
-                />
+                  onValueChange={value => handleSelectChange("location", value)}
+                >
+                  <SelectTrigger className="h-12 px-4 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-xl transition-all duration-200">
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Austria">Austria</SelectItem>
+                    <SelectItem value="Belgium">Belgium</SelectItem>
+                    <SelectItem value="Denmark">Denmark</SelectItem>
+                    <SelectItem value="Germany">Germany</SelectItem>
+                    <SelectItem value="Italy">Italy</SelectItem>
+                    <SelectItem value="Netherlands">Netherlands</SelectItem>
+                    <SelectItem value="Poland">Poland</SelectItem>
+                    <SelectItem value="Spain">Spain</SelectItem>
+                    <SelectItem value="Sweden">Sweden</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">

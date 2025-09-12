@@ -14,6 +14,14 @@ export interface MenuIngredient {
   name: string;
   grams: string;
   category: "starter" | "main" | "dessert" | "general";
+  foodGroup: string;
+}
+
+export interface FoodGroupTotals {
+  [foodGroup: string]: {
+    totalGrams: number;
+    perPersonGrams: number;
+  };
 }
 
 export interface MenuData {
@@ -22,6 +30,7 @@ export interface MenuData {
   main: MenuCourse;
   dessert: MenuCourse;
   ingredients: MenuIngredient[];
+  foodGroupTotals: FoodGroupTotals;
 }
 
 export interface ReceiptData {

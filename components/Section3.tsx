@@ -66,7 +66,7 @@ export default function Section3() {
               Two contrasting visions: integrated food systems vs. separated conservation and production.
             </p>
             <div className="space-y-2">
-              <p className="text-sm font-medium text-[#382B20] mb-2">What's covered</p>
+              <p className="text-sm font-medium text-[#382B20] mb-2">What&apos;s covered</p>
               <div className="text-xs text-[#382B20]">
                 <p>Coming soon...</p>
               </div>
