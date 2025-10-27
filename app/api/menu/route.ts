@@ -197,13 +197,22 @@ CRITICAL JSON REQUIREMENTS:
 - Ensure every property has a valid value
 - Test your JSON syntax before responding`;
 
-          const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+          const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
           const result = await model.generateContent(prompt);
           const response = await result.response;
           const generatedText = response.text();
 
           // Try to extract JSON from the response
-          menuData = JSON.parse(generatedText);
+          let jsonText = generatedText.trim();
+          
+          // Remove markdown code blocks if present
+          if (jsonText.startsWith('```json')) {
+            jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+          } else if (jsonText.startsWith('```')) {
+            jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+          }
+          
+          menuData = JSON.parse(jsonText);
           // Ensure the type is correct
           menuData.type = menuType;
 
